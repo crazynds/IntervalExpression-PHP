@@ -43,8 +43,13 @@ class DateIntervalGenerator{
 
             $auxDate = $this->generateNextIteration($auxDate);
         }while($auxDate->lessThanOrEqualTo($this->startAt()));
-        $this->rules_row = $rules_row;
-        $this->rules_column = $rules_column;
+        if($this->rules_row!=0 && $rules_row == 0){
+            $this->rules_row=count($this->rules)-1;
+            $this->rules_column = count($this->rules[$this->rules_row]);
+        }else{
+            $this->rules_row = $rules_row;
+            $this->rules_column = $rules_column;
+        }
     }
 
 
@@ -137,7 +142,8 @@ class DateIntervalGenerator{
                     $increment = intval($rule);
                     do{
                         $year = $newDate->year;
-                        $newDate->startOfYear()->addDays($increment);
+                        $newDate->startOfYear();
+                        $newDate->addDays($increment);
                     }while($year<$newDate->year && $increment<=365);
                 }
                 break;
