@@ -28,8 +28,9 @@ class DateIntervalGenerator{
         $rules = $interval->getRules();
         foreach($rules as $rule){
             $array = array_unique(explode(',',$rule));
+            sort($array);
             if(count($array)>0)
-                $this->rules[] = sort($array);
+                $this->rules[] = $array;
         }
     }
 
@@ -91,29 +92,48 @@ class DateIntervalGenerator{
         $newDate = $date->clone();
         switch($this->interval->getType()){
             case 'daily':
-                $newDate = $newDate->addDays($this->interval->getInterval());
+                $newDate->addDays($this->interval->getInterval());
                 break;
             case 'monthly':
-                $newDate = $newDate->startOfMonth()->addDays($rule-1);
+                if($rule!='*'){
+                    $increment = intval($rule);
+                    do{
+                        $month = $newDate->month;
+                        $newDate->startOfMonth()->addDays($increment);
+                    }while($month<$newDate->month && $increment<=30);
+                }
                 break;
             case 'weekly':
-                $days = [
-                    0 => 'Sunday',
-                    1 => 'Monday',
-                    2 => 'Tuesday',
-                    3 => 'Wednesday',
-                    4 => 'Thursday',
-                    5 => 'Friday',
-                    6 => 'Saturday'
-                ];
-                $newDate = $newDate->startOfWeek()->next($days[intval($rule)]);
+                if($rule!='*'){
+                    $days = [
+                        0 => 'Sunday',
+                        1 => 'Monday',
+                        2 => 'Tuesday',
+                        3 => 'Wednesday',
+                        4 => 'Thursday',
+                        5 => 'Friday',
+                        6 => 'Saturday'
+                    ];
+                    $newDate->startOfWeek(Carbon::SUNDAY)->subDay();
+                    $newDate->next($days[intval($rule)]);
+                }
                 break;
             case 'yearly':
-                $newDate = $newDate->startOfYear()->addDays($rule-1);
+                if($rule!='*'){
+                    $increment = intval($rule);
+                    do{
+                        $year = $newDate->year;
+                        $newDate->startOfYear()->addDays($increment);
+                    }while($year<$newDate->year && $increment<=365);
+                }
                 break;
         }
-        $days = $newDate->startOfDay()->diffInDays($date->startOfDay());
-        $date->addDays($days);
+        $days = $newDate->endOfDay()->diffInDays($date);
+        if($newDate->lessThan($date)){
+            $date->subDays($days+1);
+        }else{
+            $date->addDays($days);
+        }
         return $date;
     }
 

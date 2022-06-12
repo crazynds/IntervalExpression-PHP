@@ -71,7 +71,7 @@ class Interval {
         }
     }
 
-    public function generator(?Carbon $startAt= null,?Carbon $endAt = null){
+    public function generator(?Carbon $startAt= null,?Carbon $endAt = null):DateIntervalGenerator{
         if(!$startAt) $startAt = Carbon::now();
         return new DateIntervalGenerator($this,$startAt,$endAt);
     }
