@@ -10,13 +10,14 @@ class Interval {
     private $interval;
     private $rules;
 
-    public function __construct()
+    public function __construct(string $expression = null)
     {
         $this->intervalType = 'daily';
         $this->interval = 1;
         $this->rules = [
             "*"
         ];
+        if($expression)$this->parse($expression);
     }
 
     /**
@@ -55,13 +56,14 @@ class Interval {
         $list = explode(' ',$expression);
         $this->interval = intval(array_shift($list));
         $this->intervalType = strtolower(array_shift($list));
+        if(empty($list))$list[] = '*';
         $this->rules = $list;
         return $this;
     }
 
     public function validate(string $expression){
         $expression = trim($expression);
-        $regexExpression = "/^[0-9]* (daily|weekly ((([0-6],)*[0-6]\s|\*\s)*)(((([0-6],)*)?[0-6]|\*))|montly (((([0-2]?[0-9]|30),)*([0-2]?[0-9]|30)\s|\*\s)*)((((([0-2]?[0-9]|30),)*)?([0-2]?[0-9]|30)|\*))|yearly (((([0-2]?[0-9]?[0-9]|3[0-5][0-9]|36[0-5]),)*([0-2]?[0-9]?[0-9]|3[0-5][0-9]|36[0-5])\s|\*\s)*)((((([0-2]?[0-9]?[0-9]|3[0-5][0-9]|36[0-5]),)*)?([0-2]?[0-9]?[0-9]|3[0-5][0-9]|36[0-5])|\*)))$/i";
+        $regexExpression = "/^[0-9]* (daily|weekly ((([0-6],)*[0-6]\s|\*\s)*)(((([0-6],)*)?[0-6]|\*))|monthly (((([0-2]?[0-9]|30),)*([0-2]?[0-9]|30)\s|\*\s)*)((((([0-2]?[0-9]|30),)*)?([0-2]?[0-9]|30)|\*))|yearly (((([0-2]?[0-9]?[0-9]|3[0-5][0-9]|36[0-5]),)*([0-2]?[0-9]?[0-9]|3[0-5][0-9]|36[0-5])\s|\*\s)*)((((([0-2]?[0-9]?[0-9]|3[0-5][0-9]|36[0-5]),)*)?([0-2]?[0-9]?[0-9]|3[0-5][0-9]|36[0-5])|\*)))$/i";
         if(preg_match($regexExpression,$expression,$match)){
             return true;
         }else{
