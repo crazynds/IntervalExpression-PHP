@@ -17,6 +17,6 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.0",
-        "nesbot/carbon": "^2.58"
+        "nesbot/carbon": "^2.0"
     }
 }
