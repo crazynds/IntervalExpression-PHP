@@ -1,6 +1,9 @@
 <?php
 
-use Crazynds\IntervalExpression\Expression;
+namespace Crazynds\IntervalExpression;
+
+use Carbon\Carbon;
+use Crazynds\IntervalExpression\Expression\DateIntervalGenerator;
 
 class Interval {
     private $intervalType;
@@ -15,7 +18,6 @@ class Interval {
             "*"
         ];
     }
-
 
     /**
      * A expressão vai ser definida da seguinte forma
@@ -43,11 +45,47 @@ class Interval {
      *  * => (any 1 day of year)
      *
      * You can have N rules, for every iteration they will use the Xº rule,
-     *  if doesnt exist they will back to first and repeat the process
+     *  if doesnt exist they will back to the first rule and repeat the process
      *
      */
     public function parse(string $expression){
+        $expression = trim($expression);
+        if(!$this->validate($expression))return false;
 
+        $list = explode(' ',$expression);
+        $this->interval = intval(array_shift($list));
+        $this->intervalType = strtolower(array_shift($list));
+        $this->rules = $list;
+        return $this;
     }
+
+    public function validate(string $expression){
+        $expression = trim($expression);
+        $regexExpression = "/^[0-9]* (daily|weekly ((([0-6],)*[0-6]\s|\*\s)*)(((([0-6],)*)?[0-6]|\*))|montly (((([0-2]?[0-9]|30),)*([0-2]?[0-9]|30)\s|\*\s)*)((((([0-2]?[0-9]|30),)*)?([0-2]?[0-9]|30)|\*))|yearly (((([0-2]?[0-9]?[0-9]|3[0-5][0-9]|36[0-5]),)*([0-2]?[0-9]?[0-9]|3[0-5][0-9]|36[0-5])\s|\*\s)*)((((([0-2]?[0-9]?[0-9]|3[0-5][0-9]|36[0-5]),)*)?([0-2]?[0-9]?[0-9]|3[0-5][0-9]|36[0-5])|\*)))$/i";
+        if(preg_match($regexExpression,$expression,$match)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function generator(?Carbon $startAt= null,?Carbon $endAt = null){
+        if(!$startAt) $startAt = Carbon::now();
+        return new DateIntervalGenerator($this,$startAt,$endAt);
+    }
+
+
+    public function getType(){
+        return $this->intervalType;
+    }
+
+    public function getInterval(){
+        return $this->interval;
+    }
+
+    public function getRules(){
+        return $this->rules;
+    }
+
 
 }
