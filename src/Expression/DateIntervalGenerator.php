@@ -61,7 +61,7 @@ class DateIntervalGenerator{
         $this->rules_row = $rules_row;
         $this->rules_column = $rules_column;
 
-        return $this->endAt->lessThanOrEqualTo($date);
+        return $date->lessThanOrEqualTo($this->endAt);
     }
 
     private function generateNextIteration(Carbon $date):Carbon{
