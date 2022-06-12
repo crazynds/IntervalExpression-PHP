@@ -43,26 +43,27 @@ var_dump($dates);
 
 ## Expression Definition
 
-[0-9]+ (daily|weekly|monthly|yearly) {rules}+
+[0-9]* (daily|weekly|monthly|yearly) {rules}+
 
 - daily has no rules
+
 - weekly rules:
- * {day of week [0-9]},{day of week [0-9]},...
- * 0,3,5 => (Sunday, Wednesday and Friday)
- * 1 => (Monday)
- * \* => (any 1 day of week)
+   * {day of week [0-9]},{day of week [0-9]},...
+   * 0,3,5 => (Sunday, Wednesday and Friday)
+   * 1 => (Monday)
+   * \* => (any 1 day of week)
 
 - monthly rules:
- * {day of month [0-30]},{day of month [0-30]},...
- * 12,15 => (day 12 and 15 of every month iteration)
- * 10 => (day 10 of every month iteration)
- * \* => (any 1 day of month)
+   * {day of month [0-30]},{day of month [0-30]},...
+   * 12,15 => (day 12 and 15 of every month iteration)
+   * 10 => (day 10 of every month iteration)
+   * \* => (any 1 day of month)
 
 - yearly:
- * {day of year [0-365]},{day of year [0-365]},...
- * 12,15 => (day 12 and 15 of every year iteration)
- * 1 => (first day of every year iteration)
- * \* => (any 1 day of year)
+   * {day of year [0-365]},{day of year [0-365]},...
+   * 12,15 => (day 12 and 15 of every year iteration)
+   * 1 => (first day of every year iteration)
+   * \* => (any 1 day of year)
 
 There can be multiple rules, every iteration will cycle through them. Ex: if there are two rules, the third iteration will use the first rule.
 
