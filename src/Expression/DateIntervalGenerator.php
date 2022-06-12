@@ -32,7 +32,21 @@ class DateIntervalGenerator{
             if(count($array)>0)
                 $this->rules[] = $array;
         }
+        $this->syncPointersDate();
     }
+
+    private function syncPointersDate(){
+        $auxDate = $this->startAt->clone();
+        do{
+            $rules_row = $this->rules_row;
+            $rules_column = $this->rules_column;
+
+            $auxDate = $this->generateNextIteration($auxDate);
+        }while($auxDate->lessThanOrEqualTo($this->startAt()));
+        $this->rules_row = $rules_row;
+        $this->rules_column = $rules_column;
+    }
+
 
     public function endAt(){
         return $this->endAt;
