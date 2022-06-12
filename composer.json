@@ -1,0 +1,22 @@
+{
+    "name": "crazynds/interval-expression",
+    "description": "Create complex interval for calendar",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Crazynds\\IntervalExpression\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "crazynds",
+            "email": "luli.broch@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.0",
+        "nesbot/carbon": "^2.58"
+    }
+}
