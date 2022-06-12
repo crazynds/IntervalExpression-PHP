@@ -49,7 +49,7 @@ class DateIntervalGenerator{
     public function next(){
         $this->currentDate = $this->generateNextIteration($this->currentDate);
         $this->iteration++;
-        if($this->currentDate->lessThanOrEqualTo($this->endAt))return null;
+        if($this->endAt->lessThanOrEqualTo($this->currentDate))return null;
         return $this->currentDate;
     }
     public function hasNext(){
@@ -61,7 +61,7 @@ class DateIntervalGenerator{
         $this->rules_row = $rules_row;
         $this->rules_column = $rules_column;
 
-        return $date->lessThanOrEqualTo($this->endAt);
+        return $this->endAt->lessThanOrEqualTo($date);
     }
 
     private function generateNextIteration(Carbon $date):Carbon{
