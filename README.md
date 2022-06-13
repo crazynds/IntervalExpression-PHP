@@ -4,7 +4,7 @@
 [![Total Downloads](http://poser.pugx.org/crazynds/interval-expression/downloads)](https://packagist.org/packages/crazynds/interval-expression) 
 [![License](http://poser.pugx.org/crazynds/interval-expression/license)](https://packagist.org/packages/crazynds/interval-expression) 
 
-
+Interval system for schedules that represents recurrences that cannot be reached using cron.
 
 ## Installation
 
@@ -69,7 +69,7 @@ There can be multiple rules, every iteration will cycle through them. Ex: if the
 
 ## Examples
 
-#### 2 weekly 1,5
+#### "2 weekly 1,5"
 Description: Every 2 weeks on mondays and fridays
 Inicial Date: 12-06-2022 14:30:00 
 Output:
@@ -79,7 +79,7 @@ Output:
 - "01-07-2022 14:30:00" (friday)
 
 
-#### 2 weekly 1 5
+#### "2 weekly 1 5"
 Description: Every 2 weeks, the first occurence will be on a monday an the second will be on a friday.
 Inicial Date: 12-06-2022 14:30:00 
 Output:
@@ -89,7 +89,7 @@ Output:
 - "29-07-2022 14:30:00" (friday)
 
 
-#### 2 weekly 1,5 5
+#### "2 weekly 1,5 5"
 Description: Every 2 weeks, the first occurence will happen both on a monday and a friday, and the second will be only on a friday.
 Inicial Date: 12-06-2022 14:30:00 
 Output:
@@ -98,9 +98,14 @@ Output:
 - "11-07-2022 14:30:00" (monday) 
 - "29-07-2022 14:30:00" (friday)
 
-
-
-
+#### "1 monthly 0,14 19"
+Description: Every month, on first occurence will happen on the 1st and 15th day of the month, and the second will be only on a 20th day of the month.
+Inicial Date: 12-06-2022 14:30:00 
+Output:
+- "15-06-2022 14:30:00" (15th day)
+- "20-07-2022 14:30:00" (20th day)
+- "01-08-2022 14:30:00" (1st day)
+- "15-08-2022 14:30:00" (15th day)
 
 
 ## Tested and supported versions of PHP
