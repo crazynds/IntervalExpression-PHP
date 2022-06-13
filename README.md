@@ -93,10 +93,10 @@ Output:
 Description: Every 2 weeks, the first occurence will happen both on a monday and a friday, and the second will be only on a friday.
 Inicial Date: 12-06-2022 14:30:00 
 Output:
-- "13-06-2022 14:30:00" (monday) 
+- "13-06-2022 14:30:00" (monday)
+- "17-06-2022 14:30:00" (friday)
 - "01-07-2022 14:30:00" (friday)
 - "11-07-2022 14:30:00" (monday) 
-- "29-07-2022 14:30:00" (friday)
 
 #### "1 monthly 0,14 19"
 Description: Every month, on first occurence will happen on the 1st and 15th day of the month, and the second will be only on a 20th day of the month.
