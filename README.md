@@ -43,7 +43,7 @@ var_dump($dates);
 
 ## Expression Definition
 
-[0-9]* (daily|weekly|monthly|yearly) {rules}+
+[0-9]+ (daily|weekly|monthly|yearly) {rules}*
 
 - daily has no rules
 
