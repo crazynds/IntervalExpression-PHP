@@ -14,7 +14,27 @@ Interval system for schedules that represents recurrences that cannot be reached
 composer require crazynds/interval-expression
 ```
 
-2. 
+2. Check if expression is valid
+
+```php
+use Crazynds\IntervalExpression\Interval;
+
+$interval = new Interval();
+// Expression for every 1 week on monday, wednesday and friday
+$expression = '1 weekly 1,3,5';
+
+if($interval->validate($expression)){
+    //is valid expression
+    $interval->parse($expression);
+    
+}
+
+if($interval->parse($expression)){
+    //this way check if the expression is valid too and apply the expression in the interval
+}
+```
+
+3. Iterate in generator
 
 ``` php
 
@@ -28,15 +48,15 @@ $interval = new Interval();
 // Expression for every 1 week on monday, wednesday and friday
 $expression = '1 weekly 1,3,5';
 
-$interval->parse($expression);
-$generator = $interval->generator($dateStart,$dateEnd);
-
 $dates = [];
-$started = $generator->current()->format('d-m-Y H:i:s');
-while($generator->hasNext()){
-    $dates[] = $generator->next()->format('d-m-Y H:i:s');
-}
+if($interval->parse($expression)){
+    $generator = $interval->generator($dateStart,$dateEnd);
 
+    $started = $generator->current()->format('d-m-Y H:i:s');
+    while($generator->hasNext()){
+        $dates[] = $generator->next()->format('d-m-Y H:i:s');
+    }
+}
 var_dump($dates);
 
 ```
