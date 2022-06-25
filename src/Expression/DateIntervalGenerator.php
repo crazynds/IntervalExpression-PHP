@@ -68,10 +68,11 @@ class DateIntervalGenerator{
     public function next(){
         $this->currentDate = $this->generateNextIteration($this->currentDate);
         $this->iteration++;
-        if($this->endAt->lessThanOrEqualTo($this->currentDate))return null;
+        if($this->endAt?->lessThanOrEqualTo($this->currentDate))return null;
         return $this->currentDate;
     }
     public function hasNext(){
+        if(empty($this->end_at))return true;
         $rules_row = $this->rules_row;
         $rules_column = $this->rules_column;
 
