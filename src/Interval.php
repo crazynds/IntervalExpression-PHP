@@ -4,6 +4,7 @@ namespace Crazynds\IntervalExpression;
 
 use Carbon\Carbon;
 use Crazynds\IntervalExpression\Expression\DateIntervalGenerator;
+use DateTime;
 
 class Interval {
     private $intervalType;
@@ -71,8 +72,12 @@ class Interval {
         }
     }
 
-    public function generator(?Carbon $startAt= null,?Carbon $endAt = null):DateIntervalGenerator{
+
+    public function generator(?DateTime $startAt= null,?DateTime $endAt = null):DateIntervalGenerator{
         if(!$startAt) $startAt = Carbon::now();
+		else $startAt = Carbon::parse($startAt);
+		if($endAt)
+			$endAt = Carbon::parse($endAt);
         return new DateIntervalGenerator($this,$startAt,$endAt);
     }
 
@@ -87,6 +92,15 @@ class Interval {
 
     public function getRules(){
         return $this->rules;
+    }
+
+    public function getExpression(){
+        $exp = [
+            $this->interval,
+            $this->intervalType,
+            implode(' ',$this->rules),
+        ];
+        return implode(' ',$exp);
     }
 
 

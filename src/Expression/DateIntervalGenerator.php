@@ -4,6 +4,7 @@ namespace Crazynds\IntervalExpression\Expression;
 
 use Crazynds\IntervalExpression\Interval;
 use Carbon\Carbon;
+use DateTime;
 
 class DateIntervalGenerator{
 
@@ -17,6 +18,7 @@ class DateIntervalGenerator{
 
     private $iteration = 0;
     private $currentDate;
+	private $nextDate;
 
 
 
@@ -25,6 +27,7 @@ class DateIntervalGenerator{
         $this->interval = $interval;
         $this->endAt = $endAt;
         $this->currentDate = $startAt->clone();
+        $this->nextDate = null;
         $rules = $interval->getRules();
         foreach($rules as $rule){
             $array = array_unique(explode(',',$rule));
@@ -50,39 +53,96 @@ class DateIntervalGenerator{
             $this->rules_row = $rules_row;
             $this->rules_column = $rules_column;
         }
+        dump($this);
     }
 
 
-    public function endAt(){
+    public function endAt():?Carbon{
         return $this->endAt;
     }
-    public function startAt(){
+    public function startAt():Carbon{
         return $this->startAt;
+    }
+    /**
+     * Return current date of iterrator
+     * if it is the first call will return the startAt even if it doesn't match the interval
+     */
+    public function current():?Carbon{
+        return $this->currentDate;
     }
     public function iteration(){
         return $this->iteration;
     }
-    public function current(){
+
+    /**
+     * Check the next iterration, and if less than endAt return null
+     * If endAt is null this functions always return the next iteration
+     */
+    public function next():?Carbon{
+		if($this->nextDate){
+			$this->currentDate = $this->nextDate;
+			$this->nextDate = null;
+		}else{
+			$this->currentDate = $this->generateNextIteration($this->currentDate->clone());
+			$this->iteration++;
+			if($this->endAt?->lessThanOrEqualTo($this->currentDate)){
+                return null;
+            }
+		}
         return $this->currentDate;
     }
-    public function next(){
-        $this->currentDate = $this->generateNextIteration($this->currentDate);
-        $this->iteration++;
-        if($this->endAt?->lessThanOrEqualTo($this->currentDate))return null;
-        return $this->currentDate;
-    }
-    public function hasNext(){
-        if(empty($this->end_at))return true;
-        $rules_row = $this->rules_row;
-        $rules_column = $this->rules_column;
+
+    /**
+     * Check the next iterration, and if less than endAt
+     * If endAt is null this functions always return true
+     */
+    public function hasNext():bool{
+        if($this->endAt==null)
+            return true;
+		if($this->nextDate)
+            return true;
 
         $date = $this->generateNextIteration($this->currentDate->clone());
-
-        $this->rules_row = $rules_row;
-        $this->rules_column = $rules_column;
+		$this->nextDate = $date;
 
         return $date->lessThanOrEqualTo($this->endAt);
     }
+
+    /**
+     * This function check if the date in parameter is in the date interval generator
+     */
+    public function match(?DateTime $date):bool{
+        if(!$date)return false;
+        $date = new Carbon($date);
+        if($this->startAt->greaterThan($date))return false;
+        if(!empty($this->endAt) && $this->endAt->lessThan($date))return false;
+
+        switch($this->interval->getType()){
+            case 'daily':
+                $days=$this->startAt->diffInDays($date);
+                return $days%$this->interval->getInterval() == 0;
+            case 'monthly':
+                $months=$this->startAt->diffInMonths($date);
+                $rules_row=(int)($months/$this->interval->getInterval());
+                $rules_row%=count($this->rules);
+                return in_array($date->day-1,$this->rules[$rules_row]);
+                break;
+            case 'weekly':
+                $weeks=$this->startAt->diffInWeeks($date);
+                $rules_row=(int)($weeks/$this->interval->getInterval());
+                $rules_row%=count($this->rules);
+                return in_array($date->dayOfWeek,$this->rules[$rules_row]);
+                break;
+            case 'yearly':
+                $years=$this->startAt->diffInYears($date);
+                $rules_row=(int)($years/$this->interval->getInterval());
+                $rules_row%=count($this->rules);
+                return in_array($date->copy()->startOfYear()->diffInDays($date),$this->rules[$rules_row]);
+                break;
+        }
+
+    }
+
 
     private function generateNextIteration(Carbon $date):Carbon{
         if($this->rules_row >= count($this->rules)){
