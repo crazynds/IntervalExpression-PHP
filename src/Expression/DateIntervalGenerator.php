@@ -125,19 +125,29 @@ class DateIntervalGenerator{
                 $months=$this->startAt->diffInMonths($date);
                 $rules_row=(int)($months/$this->interval->getInterval());
                 $rules_row%=count($this->rules);
-                return in_array($date->day-1,$this->rules[$rules_row]);
+
+                if($this->rules[$rules_row][0]=='*'){
+                    return $this->startAt->day == $date->day;
+                }else
+                    return in_array($date->day-1,$this->rules[$rules_row]);
                 break;
             case 'weekly':
                 $weeks=$this->startAt->diffInWeeks($date);
                 $rules_row=(int)($weeks/$this->interval->getInterval());
                 $rules_row%=count($this->rules);
-                return in_array($date->dayOfWeek,$this->rules[$rules_row]);
+                if($this->rules[$rules_row][0]=='*'){
+                    return $this->startAt->dayOfWeek == $date->dayOfWeek;
+                }else
+                    return in_array($date->dayOfWeek,$this->rules[$rules_row]);
                 break;
             case 'yearly':
                 $years=$this->startAt->diffInYears($date);
                 $rules_row=(int)($years/$this->interval->getInterval());
                 $rules_row%=count($this->rules);
-                return in_array($date->copy()->startOfYear()->diffInDays($date),$this->rules[$rules_row]);
+                if($this->rules[$rules_row][0]=='*'){
+                    return $this->startAt->copy()->startOfYear()->diffInDays($this->startAt) == $date->copy()->startOfYear()->diffInDays($date);
+                }else
+                    return in_array($date->copy()->startOfYear()->diffInDays($date),$this->rules[$rules_row]);
                 break;
         }
 
